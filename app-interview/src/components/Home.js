@@ -99,14 +99,16 @@ class Home extends Component {
 
   render() {
     const { data, isLoading, categories, checked } = this.state;
-
+    const filtre = data.filter(movie =>
+        checked.includes(movie.category)
+      );
     return (
       <Container>
         <h1>CinemApp</h1>
         {isLoading ? (
           <LoaderDiv></LoaderDiv>
         ) : (
-          console.log(checked)
+          console.log(filtre)
         )}
         {isLoading ? (
           <LoaderDiv></LoaderDiv>
@@ -120,7 +122,7 @@ class Home extends Component {
           <LoaderDiv></LoaderDiv>
         ) : (
           <ListeFilms
-            films={data}
+            films={filtre}
             deletedMovie={this.deletedMovie}
             likeMovie={this.likeMovie}
             dislikeMovie={this.dislikeMovie}
