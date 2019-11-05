@@ -61,9 +61,9 @@ const movies = [
     dislikes: 12
   }, {
     id: '11',
-    title: 'Gone Girl',
-    category: 'Thriller',
-    likes: 22,
+    title: 'Scream',
+    category: 'Horror',
+    likes: 60,
     dislikes: 12
   }
 ]

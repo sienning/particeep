@@ -1,18 +1,41 @@
 import React, { Component } from "react";
 // import Filtre from './Filtre';
-import { Container } from "semantic-ui-react";
+import { Container, Item } from "semantic-ui-react";
 import ListeFilms from "./ListeFilms";
 import "../Home.css";
 import { movies$ as movies } from "../movies.js";
 import LoaderDiv from "./LoaderDiv";
 import FiltreFilms from "./FiltreFilms";
+import PaginationDiv from "./PaginationDiv";
+import Affichage from "./Affichage";
 
 class Home extends Component {
   state = {
     data: [],
     isLoading: true,
     categories: [],
-    checked: []
+    checked: [],
+    options: [
+      {
+        key: 4,
+        text: "4",
+        value: 4,
+        content: "4"
+      },
+      {
+        key: 8,
+        text: "8",
+        value: 8,
+        content: "8"
+      },
+      {
+        key: 12,
+        text: "12",
+        value: 12,
+        content: "12"
+      }
+    ],
+    nbItems: 12
   };
 
   makeCategories(data) {
@@ -35,7 +58,7 @@ class Home extends Component {
             data: value,
             isLoading: false,
             categories: this.makeCategories(value),
-            checked: this.makeCategories(value),
+            checked: this.makeCategories(value)
           });
         },
         raison => {
@@ -98,37 +121,44 @@ class Home extends Component {
   }
 
   render() {
-    const { data, isLoading, categories, checked } = this.state;
-    const filtre = data.filter(movie =>
-        checked.includes(movie.category)
-      );
+    const {
+      data,
+      isLoading,
+      categories,
+      checked,
+      options,
+      nbItems
+    } = this.state;
+    const filtre = data.filter(movie => checked.includes(movie.category));
     return (
-      <Container>
-        <h1>CinemApp</h1>
-        {isLoading ? (
-          <LoaderDiv></LoaderDiv>
-        ) : (
-          console.log(filtre)
-        )}
-        {isLoading ? (
-          <LoaderDiv></LoaderDiv>
-        ) : (
-          <FiltreFilms
-            handleFilter={this.handleFilter}
-            categories={categories}
-          ></FiltreFilms>
-        )}
-        {isLoading ? (
-          <LoaderDiv></LoaderDiv>
-        ) : (
-          <ListeFilms
-            films={filtre}
-            deletedMovie={this.deletedMovie}
-            likeMovie={this.likeMovie}
-            dislikeMovie={this.dislikeMovie}
-          />
-        )}
-      </Container>
+      <div className="content-home">
+        <Container>
+          <h1>CinemApp</h1>
+          {isLoading ? (
+            <div></div>
+          ) : (
+            <FiltreFilms
+              handleFilter={this.handleFilter}
+              categories={categories}
+            ></FiltreFilms>
+          )}
+
+          {isLoading ? (
+            <LoaderDiv></LoaderDiv>
+          ) : (
+            <ListeFilms
+              films={filtre}
+              deletedMovie={this.deletedMovie}
+              likeMovie={this.likeMovie}
+              dislikeMovie={this.dislikeMovie}
+            />
+          )}
+        </Container>
+        <Item inline className="footer">
+          <PaginationDiv />
+          <Affichage listItems={options} nbItems={nbItems} />
+        </Item>
+      </div>
     );
   }
 }

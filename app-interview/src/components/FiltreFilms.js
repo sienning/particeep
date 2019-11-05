@@ -1,8 +1,6 @@
 import React from 'react';
 import { Form, Checkbox, Segment } from 'semantic-ui-react';
 
-
-
 const FiltreFilms = ({ handleFilter, categories }) => {
     return (
         <Segment compact>
