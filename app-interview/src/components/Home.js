@@ -47,6 +47,8 @@ class Home extends Component {
   dislikeMovie = this.dislikeMovie.bind(this);
   handleFiltre = this.handleFiltre.bind(this);
   handleAffichage = this.handleAffichage.bind(this);
+  affichagePage = this.affichagePage.bind(this);
+  handlePageChange = this.handlePageChange.bind(this);
 
   async componentDidMount() {
     this.setState({ isLoading: true });
@@ -55,11 +57,11 @@ class Home extends Component {
         value => {
           this.setState({
             data: value,
-            filtre: value,
+            filtre: this.affichagePage(value),
             isLoading: false,
             categories: this.makeCategories(value),
             checked: this.makeCategories(value),
-            nbPages : this.countPages(value),
+            nbPages: this.countPages(value)
           });
         },
         raison => {
@@ -85,18 +87,27 @@ class Home extends Component {
   }
 
   countPages(data) {
-      console.log("countPages")
-      console.log(Math.ceil(data.length/this.state.nbItems))
-    return Math.ceil(data.length/this.state.nbItems);
+    return Math.ceil(data.length / this.state.nbItems);
   }
-  
+
+  affichagePage(data){
+    const indexOfLastItem = this.state.currentPage * this.state.nbItems;
+    const indexOfFirstItem = indexOfLastItem - this.state.nbItems;
+
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    return currentItems;
+  }
 
   deletedMovie(event) {
     let data = this.state.data;
     const index = event.currentTarget.name;
     let indexOfMovie = data.findIndex(i => i.id === index);
     data.splice(indexOfMovie, 1);
-    this.setState({ data: data, categories: this.makeCategories(data), nbPages: this.countPages(data) });
+    this.setState({
+      data: data,
+      categories: this.makeCategories(data),
+      nbPages: this.countPages(data)
+    });
   }
 
   likeMovie(event) {
@@ -124,15 +135,26 @@ class Home extends Component {
     } else {
       data.push(cat);
     }
-    const sort = this.state.data.filter(movie => this.state.checked.includes(movie.category));
-    this.setState({ checked: data, filter: sort, nbPages: this.countPages(sort) });
+    const sort = this.state.data.filter(movie =>
+      this.state.checked.includes(movie.category)
+    );
+    this.setState({
+      checked: data,
+      filter: sort,
+      nbPages: this.countPages(sort)
+    });
   }
 
   handleAffichage(event, { value }) {
     const val = value;
-    this.setState({nbItems: val}, function () {
-        this.setState({nbPages: this.countPages(this.state.filtre)})
+    this.setState({ nbItems: val }, function() {
+      this.setState({ nbPages: this.countPages(this.state.filtre) });
     });
+  }
+
+  handlePageChange(event, { activePage }) {
+    const val = activePage;
+    this.setState({ currentPage: val });
   }
 
   render() {
@@ -144,8 +166,9 @@ class Home extends Component {
       options,
       nbItems,
       nbPages,
+      currentPage,
     } = this.state;
-    const filtre = data.filter(movie => checked.includes(movie.category));
+    const filtre = this.affichagePage(data.filter(movie => checked.includes(movie.category)));
     return (
       <div className="content-home">
         <Container>
@@ -176,7 +199,7 @@ class Home extends Component {
             nbItems={nbItems}
             handleAffichage={this.handleAffichage}
           />
-          <PaginationDiv nbPages={nbPages} />
+          <PaginationDiv nbPages={nbPages} currentPage={currentPage} handlePageChange={this.handlePageChange} />
         </Item>
       </div>
     );
