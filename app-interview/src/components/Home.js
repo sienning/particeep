@@ -59,7 +59,8 @@ class Home extends Component {
         let indexOfMovie = data.findIndex(i => i.id === index);
 
         data.splice(indexOfMovie, 1);
-        this.setState({ data : data })
+        
+        this.setState({ data : data, categories: this.makeCategories(data) })
     }
 
     likeMovie(event) {

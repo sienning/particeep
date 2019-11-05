@@ -12,7 +12,7 @@ const Film = ({ id, title, category, likes, dislikes, deleteMovie, likeMovie, di
                     <Progress percent={100 * likes / (likes + dislikes)} color='green' size='small'></Progress>
                 </Card.Description>
 
-                <Button as='div' labelPosition='right' id={id} onClick={likeMovie}>
+                <Button floated='left' as='div' labelPosition='right' id={id} onClick={likeMovie}>
                     <Button color='green'>
                         <Icon name='thumbs up' />
                     </Button>
@@ -21,7 +21,7 @@ const Film = ({ id, title, category, likes, dislikes, deleteMovie, likeMovie, di
                     </Label>
                 </Button>
                 
-                <Button as='div' labelPosition='right' id={id} onClick={dislikeMovie}>
+                <Button floated='left' as='div' labelPosition='right' id={id} onClick={dislikeMovie}>
                     <Button color='red'>
                         <Icon name='thumbs down' />
                     </Button>
