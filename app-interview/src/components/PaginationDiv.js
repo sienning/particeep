@@ -1,7 +1,7 @@
 import React from "react";
 import { Pagination } from "semantic-ui-react";
 
-const PaginationDiv = ( ) => {
+const PaginationDiv = ({ nbPages }) => {
   return (
     <Pagination
       boundaryRange={0}
@@ -10,8 +10,7 @@ const PaginationDiv = ( ) => {
       firstItem={null}
       lastItem={null}
       siblingRange={1}
-      totalPages={1}
-      disabled
+      totalPages={nbPages}
     />
   );
 };

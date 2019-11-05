@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-// import Filtre from './Filtre';
-import { Container, Item } from "semantic-ui-react";
+import { Container, Item, Divider } from "semantic-ui-react";
 import ListeFilms from "./ListeFilms";
 import "../Home.css";
 import { movies$ as movies } from "../movies.js";
@@ -12,9 +11,13 @@ import Affichage from "./Affichage";
 class Home extends Component {
   state = {
     data: [],
+    filtre: [],
     isLoading: true,
     categories: [],
     checked: [],
+    currentPage: 1,
+    nbPages: 0,
+    nbItems: 12,
     options: [
       {
         key: 4,
@@ -34,9 +37,41 @@ class Home extends Component {
         value: 12,
         content: "12"
       }
-    ],
-    nbItems: 12
+    ]
   };
+
+  makeCategories = this.makeCategories.bind(this);
+  countPages = this.countPages.bind(this);
+  deletedMovie = this.deletedMovie.bind(this);
+  likeMovie = this.likeMovie.bind(this);
+  dislikeMovie = this.dislikeMovie.bind(this);
+  handleFiltre = this.handleFiltre.bind(this);
+  handleAffichage = this.handleAffichage.bind(this);
+
+  async componentDidMount() {
+    this.setState({ isLoading: true });
+    try {
+      await movies.then(
+        value => {
+          this.setState({
+            data: value,
+            filtre: value,
+            isLoading: false,
+            categories: this.makeCategories(value),
+            checked: this.makeCategories(value),
+            nbPages : this.countPages(value),
+          });
+        },
+        raison => {
+          console.log(raison);
+        }
+      );
+    } catch (err) {
+      this.setState({ isLoading: true });
+      console.log(err.msg);
+      throw err;
+    }
+  }
 
   makeCategories(data) {
     const newData = [];
@@ -49,75 +84,55 @@ class Home extends Component {
     return newData;
   }
 
-  async componentDidMount() {
-    this.setState({ isLoading: true });
-    try {
-      await movies.then(
-        value => {
-          this.setState({
-            data: value,
-            isLoading: false,
-            categories: this.makeCategories(value),
-            checked: this.makeCategories(value)
-          });
-        },
-        raison => {
-          console.log(raison); // Erreur !
-        }
-      );
-    } catch (err) {
-      this.setState({ isLoading: true });
-      console.log(err.msg);
-      throw err;
-    }
+  countPages(data) {
+      console.log("countPages")
+      console.log(Math.ceil(data.length/this.state.nbItems))
+    return Math.ceil(data.length/this.state.nbItems);
   }
-
-  deletedMovie = this.deletedMovie.bind(this);
-  likeMovie = this.likeMovie.bind(this);
-  dislikeMovie = this.dislikeMovie.bind(this);
-  handleFilter = this.handleFilter.bind(this);
+  
 
   deletedMovie(event) {
     let data = this.state.data;
     const index = event.currentTarget.name;
     let indexOfMovie = data.findIndex(i => i.id === index);
-
     data.splice(indexOfMovie, 1);
-
-    this.setState({ data: data, categories: this.makeCategories(data) });
+    this.setState({ data: data, categories: this.makeCategories(data), nbPages: this.countPages(data) });
   }
 
   likeMovie(event) {
     let data = this.state.data;
     const index = event.currentTarget.id;
-
     let indexOfMovie = data.findIndex(i => i.id === index);
     data[indexOfMovie]["likes"]++;
-
     this.setState({ data: data });
   }
 
   dislikeMovie(event) {
     let data = this.state.data;
     const index = event.currentTarget.id;
-
     let indexOfMovie = data.findIndex(i => i.id === index);
     data[indexOfMovie]["dislikes"]++;
-
     this.setState({ data: data });
   }
 
-  handleFilter(event) {
+  handleFiltre(event) {
     let data = this.state.checked;
     let cat = event.target.innerHTML;
-
     if (data.includes(cat)) {
       let indexOfCategory = data.findIndex(i => i === cat);
       data.splice(indexOfCategory, 1);
     } else {
       data.push(cat);
     }
-    this.setState({ checked: data });
+    const sort = this.state.data.filter(movie => this.state.checked.includes(movie.category));
+    this.setState({ checked: data, filter: sort, nbPages: this.countPages(sort) });
+  }
+
+  handleAffichage(event, { value }) {
+    const val = value;
+    this.setState({nbItems: val}, function () {
+        this.setState({nbPages: this.countPages(this.state.filtre)})
+    });
   }
 
   render() {
@@ -127,24 +142,25 @@ class Home extends Component {
       categories,
       checked,
       options,
-      nbItems
+      nbItems,
+      nbPages,
     } = this.state;
     const filtre = data.filter(movie => checked.includes(movie.category));
     return (
       <div className="content-home">
         <Container>
-          <h1>CinemApp</h1>
+          <h1>CinémApp</h1>
           {isLoading ? (
-            <div></div>
+            <></>
           ) : (
             <FiltreFilms
-              handleFilter={this.handleFilter}
+              handleFiltre={this.handleFiltre}
               categories={categories}
             ></FiltreFilms>
           )}
-
+          <Divider />
           {isLoading ? (
-            <LoaderDiv></LoaderDiv>
+            <LoaderDiv />
           ) : (
             <ListeFilms
               films={filtre}
@@ -154,9 +170,13 @@ class Home extends Component {
             />
           )}
         </Container>
-        <Item inline className="footer">
-          <PaginationDiv />
-          <Affichage listItems={options} nbItems={nbItems} />
+        <Item className="footer">
+          <Affichage
+            listItems={options}
+            nbItems={nbItems}
+            handleAffichage={this.handleAffichage}
+          />
+          <PaginationDiv nbPages={nbPages} />
         </Item>
       </div>
     );

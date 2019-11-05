@@ -65,6 +65,18 @@ const movies = [
     category: 'Horror',
     likes: 60,
     dislikes: 12
+  }, {
+    id: '12',
+    title: 'Frozen',
+    category: 'Animation',
+    likes: 600,
+    dislikes: 105
+  }, {
+    id: '13',
+    title: 'Dragons',
+    category: 'Animation',
+    likes: 200,
+    dislikes: 150
   }
 ]
 

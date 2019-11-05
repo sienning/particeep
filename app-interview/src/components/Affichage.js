@@ -1,14 +1,12 @@
 import React from "react";
-import { Dropdown, Segment } from "semantic-ui-react";
+import { Dropdown, Segment, Icon } from "semantic-ui-react";
 
-const Affichage = ({ nbItems, listItems }) => {
+const Affichage = ({ listItems, handleAffichage }) => {
   return (
-    <div>
-      <Segment inverted floated="left">
-        Show me posts by{" "}
-        <Dropdown key={listItems.value} inline options={listItems} defaultValue={nbItems} />
+      <Segment inverted>
+        <Icon name="th" size="big"></Icon> {" "}
+        <Dropdown inline name={listItems.value} onChange={handleAffichage} key={listItems.value} options={listItems} defaultValue={listItems[2].value}  />
       </Segment>
-    </div>
   );
 };
 
