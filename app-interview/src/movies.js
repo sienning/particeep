@@ -77,6 +77,12 @@ const movies = [
     category: 'Animation',
     likes: 200,
     dislikes: 150
+  }, {
+    id: '14',
+    title: 'Dragons 2',
+    category: 'Animation',
+    likes: 200,
+    dislikes: 150
   }
 ]
 

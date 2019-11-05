@@ -93,7 +93,6 @@ class Home extends Component {
   affichagePage(data){
     const indexOfLastItem = this.state.currentPage * this.state.nbItems;
     const indexOfFirstItem = indexOfLastItem - this.state.nbItems;
-
     const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
     return currentItems;
   }
@@ -168,7 +167,9 @@ class Home extends Component {
       nbPages,
       currentPage,
     } = this.state;
+
     const filtre = this.affichagePage(data.filter(movie => checked.includes(movie.category)));
+
     return (
       <div className="content-home">
         <Container>
